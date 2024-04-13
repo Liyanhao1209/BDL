@@ -1,0 +1,7 @@
+.idea
+target
+venv
+__pycache__
+*.iml
+resources
+test

@@ -3,6 +3,9 @@ package lab1.UserFile;
 import lab1.Cache.Cache;
 
 public class DummyCache implements Cache {
+    public DummyCache(){
+        System.out.println("This is a Dummy Cache,useless");
+    }
     @Override
     public Double get(int i, int j, int k) {
         System.out.println("Dummy Cache get");

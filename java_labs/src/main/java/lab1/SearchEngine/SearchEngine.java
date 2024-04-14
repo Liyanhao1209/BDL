@@ -30,7 +30,7 @@ public class SearchEngine {
         table_name = args[2];
         cf = args[3];
         cq = args[4];
-        //init(hbase_dir,address);
+        init(hbase_dir,address);
 
         String sb = "欢迎使用数据集检索引擎--SearchEngine\n" +
                 "你可以使用help指令来查看所有可用的命令\n" +
@@ -70,9 +70,6 @@ public class SearchEngine {
                     }
                     enableCache = true;
                     cache = loadCache(argv[0]);
-                    cache.get(1,1,1);
-                    cache.put(1,1,1,1);
-                    cache.setCapacity(1);
                 }else if(s.startsWith("setCapacity ")){
                     if(!enableCache){
                         System.out.println("你必须先启用cache");
@@ -82,6 +79,12 @@ public class SearchEngine {
                         continue;
                     }
                     cache.setCapacity(Integer.parseInt(argv[0]));
+                }else if(s.equals("listCache")){
+                    if(cache==null||!enableCache){
+                        System.out.println("未启用Cache");
+                    }else{
+                        System.out.println(cache.getClass());
+                    }
                 }
                 else{
                     System.out.println("不存在这样的指令,请使用help来查看指令集");
@@ -109,7 +112,7 @@ public class SearchEngine {
 
         for (int i = 0; i < args.length; i+=2) {
             res[i] = Integer.parseInt(args[i]);
-            res[i+1] = Integer.parseInt(args[i+1]);
+            res[i+1] = Integer.parseInt(args[i]);
         }
 
         return res;
@@ -119,8 +122,8 @@ public class SearchEngine {
         int[] arr = new int[6];
         arr[0] = Integer.parseInt(args[0]);
         arr[1] = Integer.parseInt(args[3])+arr[0];
-        arr[2] = arr[3] = Integer.parseInt(args[2]);
-        arr[4] = arr[5] = Integer.parseInt(args[3]);
+        arr[2] = arr[3] = Integer.parseInt(args[1]);
+        arr[4] = arr[5] = Integer.parseInt(args[2]);
 
         return arr;
     }
@@ -255,7 +258,7 @@ public class SearchEngine {
             assert newFile;
         }
 
-        try(FileWriter fw = new FileWriter(file)){
+        try(FileWriter fw = new FileWriter(file,true)){
             StringBuilder sb = new StringBuilder();
             for(int i=indexes[0];i<=indexes[1];i++){
                 for(int j=indexes[2];j<=indexes[3];j++){
@@ -283,7 +286,7 @@ public class SearchEngine {
     }
 
     public static double byteArrayToDouble(byte[] bytes) {
-        return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getDouble();
+        return Double.parseDouble(new String(bytes));
     }
 
     public static void init(String hbase_dir,String address){

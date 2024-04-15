@@ -12,6 +12,16 @@ def remove_punctuation(text):
     return no_punctuation_text
 
 
+def list2str(seg_words: list) -> str:
+    ans = ""
+    for word in seg_words:
+        if word != "\n":
+            word = word + " "
+        ans += word
+    ans += "\n"
+    return ans
+
+
 if __name__ == '__main__':
     args = sys.argv
 
@@ -21,21 +31,13 @@ if __name__ == '__main__':
     # 读取文件内容
     with open(original_path, "r", encoding="utf-8") as doc:
         content = doc.read()
-        # 正则表达式过滤标点符号
-        content = remove_punctuation(content)
 
         # 对内容进行分词
     seg_list = jieba.cut(content, cut_all=False)
     seg_words = list(seg_list)  # 将生成器转换为列表
 
-    # 输出分词结果到目标文件
-    with open(target_path, "a", encoding='utf-8') as target:
-        target.truncate(0)
-        for word in seg_words:
-            if word != "\n":
-                word = word+" "
-            target.write(word)
+    res = remove_punctuation(list2str(seg_words))
 
-            # 可以在文件末尾添加一个换行符，以便下次写入时内容不会连在一起
-    with open(target_path, "a", encoding='utf-8') as target:
-        target.write("\n")
+    # 输出分词结果到目标文件
+    with open(target_path, "w", encoding='utf-8') as target:
+        target.write(res)

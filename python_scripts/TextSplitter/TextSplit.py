@@ -12,9 +12,9 @@ def remove_punctuation(text):
     return no_punctuation_text
 
 
-def list2str(seg_words: list) -> str:
+def list2str(segs: list) -> str:
     ans = ""
-    for word in seg_words:
+    for word in segs:
         if word != "\n":
             word = word + " "
         ans += word

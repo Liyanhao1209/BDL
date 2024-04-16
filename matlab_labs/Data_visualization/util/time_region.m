@@ -19,5 +19,5 @@ function [] = time_region(business, st, et, sr, er, data,target_dir)
       
     % 构建文件名  
     png_name = sprintf('%d %d_%d %d_%d.png', business, st, et, sr, er);  
-    saveas(gcf,image_path(png_name,target_dir),'png')
+    image_save(png_name,target_dir,'png')
 end

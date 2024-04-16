@@ -9,7 +9,7 @@ function [] = time_seq(business,region,st,et,data,target_dir)
     xlabel(sprintf('时间(以10分钟为单位,从%d开始)',st))
     ylabel('流量')
     
-    saveas(gcf,image_path(sprintf('%d %d %d_%d.png',business,region,st,et),target_dir),'png')
+    image_save(gcf,sprintf('%d %d %d_%d.png',business,region,st,et),target_dir,'png')
     
 end
 

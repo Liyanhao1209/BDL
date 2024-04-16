@@ -1,4 +1,4 @@
-function [filename] = image_path(filename,target_dir)
+function [filename] = image_save(filename,target_dir,format)
     disp(filename)
     
     filename = fullfile(target_dir,filename);
@@ -10,5 +10,6 @@ function [filename] = image_path(filename,target_dir)
     end
     
     disp(filename)
+    saveas(gcf,filename,format)
 end
 

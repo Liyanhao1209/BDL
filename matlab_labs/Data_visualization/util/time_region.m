@@ -2,7 +2,7 @@ function [] = time_region(business, st, et, sr, er, data,target_dir)
     disp(business)
     % 获取grid数据  
     grid = data(business, sr:er, st:et);  
-    grid = ArrayCopy(grid);
+    grid = ArrayCopy2D(grid);
       
     % 绘制柱状图  
     figure;  
@@ -19,19 +19,5 @@ function [] = time_region(business, st, et, sr, er, data,target_dir)
       
     % 构建文件名  
     png_name = sprintf('%d %d_%d %d_%d.png', business, st, et, sr, er);  
-    disp(png_name);  
-
-    % 构建完整的文件路径  
-    filename = fullfile(target_dir, png_name);    
-
-    % 确保目录存在  
-    dir_path = fileparts(filename);  
-    if ~exist(dir_path, 'dir')    
-        mkdir(dir_path);  % 只创建目录，不创建文件  
-    end  
-
-    disp(filename);  
-
-    % 保存图形为PNG文件  
-    saveas(gcf, filename, 'png');
+    saveas(gcf,image_path(png_name,target_dir),'png')
 end

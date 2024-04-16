@@ -1,4 +1,4 @@
-function [grid] = ArrayCopy(data)
+function [grid] = ArrayCopy2D(data)
     [~,q,r] = size(data);
 
     grid = zeros(r,q);

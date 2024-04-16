@@ -1,4 +1,4 @@
-png_target_dir = 'C:\Users\Administrator\Documents\MATLAB\Data_visualization\target\time_region';
+png_target_dir = 'D:\workSpace\BigDataLabs\matlab_labs\Data_visualization\target\time_region';
 %time_region(5,200,225,100,150,data,png_target_dir);
 %time_region(5,1,50,1,50,data,png_target_dir);
 

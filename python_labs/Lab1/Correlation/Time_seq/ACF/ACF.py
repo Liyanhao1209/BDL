@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from statsmodels.tsa.stattools import acf, pacf
 
+from Lab1.Correlation.Time_seq.periodic import eliminate_periodic
 from h5Reader import readHdf5
 
 
@@ -49,13 +50,17 @@ if __name__ == '__main__':
     args = sys.argv
 
     dataset_path = args[1]
-    # region = int(args[2])
-    # business = int(args[3])
-    target_dir = args[4]
+    region = int(args[2])
+    business = int(args[3])
+    st = int(args[4])
+    et = int(args[5])
+    target_dir = args[6]
+
     data, idx = readHdf5.readH5(dataset_path, ['data', 'idx'])
 
-    for i in range(10000):
-        for j in range(5):
-            ts_slice = data[:, i, j]
-            ACF(ts_slice, i, j)
-            PACF(ts_slice, i, j)
+    ts_slice = data[:, region, business]
+    ts_slice = (eliminate_periodic.
+                remove_seasonality_and_trend(ts_slice, idx[st].decode('utf-8')))
+
+    ACF(ts_slice,region,business)
+    PACF(ts_slice,region,business)

@@ -1,9 +1,10 @@
 import sys
-import numpy as np
-import pandas as pd
+
 import matplotlib.pyplot as plt
+import numpy as np
 from statsmodels.tsa.stattools import acf, pacf
 
+from Lab1.Correlation.Time_seq.periodic import eliminate_periodic
 from h5Reader import readHdf5
 
 
@@ -51,10 +52,15 @@ if __name__ == '__main__':
     dataset_path = args[1]
     region = int(args[2])
     business = int(args[3])
-    target_dir = args[4]
+    st = int(args[4])
+    et = int(args[5])
+    target_dir = args[6]
+
     data, idx = readHdf5.readH5(dataset_path, ['data', 'idx'])
 
     ts_slice = data[:, region, business]
+    ts_slice = (eliminate_periodic.
+                remove_seasonality_and_trend(ts_slice, idx[st].decode('utf-8')))
 
-    # ACF(ts_slice)
+    ACF(ts_slice)
     PACF(ts_slice)

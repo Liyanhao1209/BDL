@@ -6,6 +6,29 @@ from statsmodels.tsa.stattools import acf, pacf
 
 from Lab1.Correlation.Time_seq.periodic import eliminate_periodic
 from h5Reader import readHdf5
+from scipy.interpolate import UnivariateSpline
+from statsmodels.stats.diagnostic import acorr_ljungbox
+
+
+def ljung_box_q_test(time_series, lags=None):
+    # 执行Ljung-Box Q检验
+    res = acorr_ljungbox(time_series, lags=lags)
+
+    return res
+
+
+def cubic_spline_interpolate(data):
+    # 找出非nan值的索引
+    valid_data = data[~np.isnan(data)]
+    valid_indices = np.arange(data.size)[~np.isnan(data)]
+
+    # 使用三次样条插值
+    spline = UnivariateSpline(valid_indices, valid_data, k=3)
+
+    # 应用插值到整个数组
+    data_interpolated = spline(np.arange(data.size))
+
+    return data_interpolated
 
 
 def ACF(ts, region: int, business: int):
@@ -59,8 +82,24 @@ if __name__ == '__main__':
     data, idx = readHdf5.readH5(dataset_path, ['data', 'idx'])
 
     ts_slice = data[:, region, business]
+
     ts_slice = (eliminate_periodic.
                 remove_seasonality_and_trend(ts_slice, idx[st].decode('utf-8')))
+    ts_slice = cubic_spline_interpolate(ts_slice)
 
-    ACF(ts_slice,region,business)
-    PACF(ts_slice,region,business)
+    lags = 8296
+    res = ljung_box_q_test(ts_slice, lags=lags)
+
+    # 判断哪些滞后阶数的自相关性是显著的（以0.05为显著性水平）
+    significance_level = 0.05
+    with open(
+            target_dir + "\\Ljung_Box_Q_" + str(business) + "_" + str(region) + "_" + str(st) + "_" + str(et) + ".txt",
+            "a") as test_file:
+        test_file.truncate(0)
+        for i in range(lags):
+            p_value = res['lb_pvalue'][i+1]
+            if p_value<significance_level:
+                test_file.write(str(i+1) + " " + str(p_value) + "\n")
+
+    # # ACF(ts_slice, region, business)
+    # PACF(ts_slice, region, business)

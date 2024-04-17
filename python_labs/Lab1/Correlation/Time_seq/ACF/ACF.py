@@ -1,13 +1,13 @@
 import sys
-import numpy as np
-import pandas as pd
+
 import matplotlib.pyplot as plt
+import numpy as np
 from statsmodels.tsa.stattools import acf, pacf
 
 from h5Reader import readHdf5
 
 
-def ACF(ts):
+def ACF(ts, region: int, business: int):
     lags = np.arange(1, len(ts))  # 定义延迟范围
     acf_values = acf(ts, nlags=len(lags) - 1)  # 计算自相关函数值
 
@@ -24,7 +24,7 @@ def ACF(ts):
     return acf_values
 
 
-def PACF(ts):
+def PACF(ts, region: int, business: int):
     # 样本大小
     sample_size = len(ts)
     # 计算偏自相关函数时，nlags不能超过样本大小的50%
@@ -49,12 +49,13 @@ if __name__ == '__main__':
     args = sys.argv
 
     dataset_path = args[1]
-    region = int(args[2])
-    business = int(args[3])
+    # region = int(args[2])
+    # business = int(args[3])
     target_dir = args[4]
     data, idx = readHdf5.readH5(dataset_path, ['data', 'idx'])
 
-    ts_slice = data[:, region, business]
-
-    # ACF(ts_slice)
-    PACF(ts_slice)
+    for i in range(10000):
+        for j in range(5):
+            ts_slice = data[:, i, j]
+            ACF(ts_slice, i, j)
+            PACF(ts_slice, i, j)

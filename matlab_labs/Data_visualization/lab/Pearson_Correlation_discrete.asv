@@ -1,0 +1,17 @@
+center = input('请输入正中心小区的索引(一维): ');
+
+row = ceil(center/100);
+col = center - row*100;
+
+sx = row-4;
+ex = row+5;
+
+sy = col-4;
+ey = col+5;
+
+[p,q,r] = size(data);
+center_data = squeeze(data(:,center,:));
+
+for i = 1:p
+    
+end

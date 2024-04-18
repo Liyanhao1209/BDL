@@ -27,12 +27,17 @@ if __name__ == '__main__':
 
     original_path = args[1]
     target_path = args[2]
+    dict_path = args[3]
 
     # 读取文件内容
     with open(original_path, "r", encoding="utf-8") as doc:
         content = doc.read()
 
-        # 对内容进行分词
+    # 对内容进行分词
+    jieba.load_userdict(dict_path)
+    content = content.replace('\n\n', '\n')
+    # content = content.replace('  ', '')
+    # content = content.replace('\t', '')
     seg_list = jieba.cut(content, cut_all=False)
     seg_words = list(seg_list)  # 将生成器转换为列表
 

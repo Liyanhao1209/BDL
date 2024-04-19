@@ -35,13 +35,22 @@ end
 
 figure;
 
-x_values = string(sx:ex);
-y_values = string(sy:ey);
+bar3(corr_mat);
+% 设置标题和坐标轴标签  
+title(sprintf('Pearson Coeff Mat based on %d:All Business',center,i));  
+xlabel('region row');  
+ylabel('region col');  
+zlabel('Correlation');  
 
-h = heatmap(x_values,y_values,corr_mat);
-h.Title = sprintf('Pearson Coeff Mat based on %d:All Business',center,i);
-h.XLabel = 'region row';
-h.YLabel = 'region col';
+%x_values = string(sx:ex);
+%y_values = string(sy:ey);
 
-saveas(gcf,sprintf('D:\\workSpace\\BigDataLabs\\matlab_labs\\Data_visualization\\lab\\target\\Pearson_Coeff_based_on_%d_All_Business.png',center),'png')
+%h = heatmap(x_values,y_values,corr_mat);
+%h.Title = sprintf('Pearson Coeff Mat based on %d:All Business',center,i);
+%h.XLabel = 'region row';
+%h.YLabel = 'region col';
+
+%suffix = 'heatmap';
+suffix = 'bar3';
+saveas(gcf,sprintf('D:\\workSpace\\BigDataLabs\\matlab_labs\\Data_visualization\\lab\\target\\Pearson_Coeff_based_on_%d_All_Business_%s.png',center,suffix),'png')
 

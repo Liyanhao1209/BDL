@@ -3,7 +3,7 @@ import pandas as pd
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 
-def remove_seasonality_and_trend(ts, start_date, freq='10min'):
+def remove_seasonality_and_trend(ts, start_date, target_dir, business, region, freq='10min'):
     # 根据起始时间和频率生成日期范围
     dates = pd.date_range(start=start_date, periods=len(ts), freq=freq)
 
@@ -50,6 +50,8 @@ def remove_seasonality_and_trend(ts, start_date, freq='10min'):
 
     # 调整子图之间的间距，防止标签重叠
     plt.tight_layout()
+
+    # plt.savefig(target_dir + "\\Deseaonalized_" + str(region) + "_" + str(business) + ".png", dpi=300)
 
     # 显示图形
     plt.show()

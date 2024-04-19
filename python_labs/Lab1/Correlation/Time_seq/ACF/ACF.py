@@ -31,7 +31,7 @@ def cubic_spline_interpolate(data):
     return data_interpolated
 
 
-def ACF(ts, region: int, business: int):
+def ACF(ts, region: int, business: int, suffix: str):
     lags = np.arange(1, len(ts))  # 定义延迟范围
     acf_values = acf(ts, nlags=len(lags) - 1)  # 计算自相关函数值
 
@@ -43,12 +43,12 @@ def ACF(ts, region: int, business: int):
     plt.ylabel('ACF')
     plt.grid(True)
     print(target_dir + "\\ACF_" + str(region) + "_" + str(business) + ".png")
-    plt.savefig(target_dir + "\\ACF_" + str(region) + "_" + str(business) + ".png", dpi=300)
+    plt.savefig(target_dir + "\\ACF_" + str(region) + "_" + str(business) + "_" + suffix + ".png", dpi=300)
 
     return acf_values
 
 
-def PACF(ts, region: int, business: int):
+def PACF(ts, region: int, business: int, suffix: str):
     # 样本大小
     sample_size = len(ts)
     # 计算偏自相关函数时，nlags不能超过样本大小的50%
@@ -64,7 +64,7 @@ def PACF(ts, region: int, business: int):
     plt.ylabel('PACF')
     plt.grid(True)
     print(target_dir + "\\PACF_" + str(region) + "_" + str(business) + ".png")
-    plt.savefig(target_dir + "\\PACF_" + str(region) + "_" + str(business) + ".png", dpi=300)
+    plt.savefig(target_dir + "\\PACF_" + str(region) + "_" + str(business) + "_" + suffix + ".png", dpi=300)
 
     return pacf_values
 
@@ -81,25 +81,28 @@ if __name__ == '__main__':
 
     data, idx = readHdf5.readH5(dataset_path, ['data', 'idx'])
 
-    ts_slice = data[:, region, business]
+    for i in range(5):
+        ts_slice = data[:, region, i]
 
-    ts_slice = (eliminate_periodic.
-                remove_seasonality_and_trend(ts_slice, idx[st].decode('utf-8')))
-    ts_slice = cubic_spline_interpolate(ts_slice)
+        ts_slice = (eliminate_periodic.
+                    remove_seasonality_and_trend(ts_slice, idx[st].decode('utf-8'), target_dir, i, (region + 1)))
+        ts_slice = cubic_spline_interpolate(ts_slice)
+        # ACF(ts_slice, (region + 1), i, 'deseasonalized')
+        PACF(ts_slice, (region + 1), i , 'deseasonalized')
 
-    lags = 8296
-    res = ljung_box_q_test(ts_slice, lags=lags)
+    # ts_slice = data[:, region, business]
 
-    # 判断哪些滞后阶数的自相关性是显著的（以0.05为显著性水平）
-    significance_level = 0.05
-    with open(
-            target_dir + "\\Ljung_Box_Q_" + str(business) + "_" + str(region) + "_" + str(st) + "_" + str(et) + ".txt",
-            "a") as test_file:
-        test_file.truncate(0)
-        for i in range(lags):
-            p_value = res['lb_pvalue'][i+1]
-            if p_value<significance_level:
-                test_file.write(str(i+1) + " " + str(p_value) + "\n")
+    #
+    # lags = 8296
+    # res = ljung_box_q_test(ts_slice, lags=lags)
 
-    # # ACF(ts_slice, region, business)
-    # PACF(ts_slice, region, business)
+    # # 判断哪些滞后阶数的自相关性是显著的（以0.05为显著性水平）
+    # significance_level = 0.05
+    # with open(
+    #         target_dir + "\\Ljung_Box_Q_" + str(business) + "_" + str(region) + "_" + str(st) + "_" + str(et) + ".txt",
+    #         "a") as test_file:
+    #     test_file.truncate(0)
+    #     for i in range(lags):
+    #         p_value = res['lb_pvalue'][i+1]
+    #         if p_value<significance_level:
+    #             test_file.write(str(i+1) + " " + str(p_value) + "\n")

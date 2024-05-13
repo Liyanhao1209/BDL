@@ -40,53 +40,7 @@ public class SearchEngine {
                 System.out.print("SearchEngine>>>");
                 String s = br.readLine();
                 String[] argv = getArgs(s);
-                if(s.equals("help")){
-                    helpDetail();
-                }else if(s.equals("exit")){
-                    break;
-                }else if(s.startsWith("get ")){
-                    cmd_get(argv);
-                }else if(s.startsWith("getWindow ")){
-                    cmd_getWindow(argv);
-                }else if(s.startsWith("getRange ")){
-                    cmd_getRange(argv);
-                }else if(s.startsWith("save ")){
-                    cmd_save(argv);
-                }else if(s.startsWith("saveWindow ")){
-                    cmd_save_window(argv);
-                }else if(s.startsWith("saveRange ")){
-                    cmd_save_range(argv);
-                }else if(s.equals("enableCache")){
-                    enableCache = true;
-                    if(cache==null){
-                        cache = new LRU_Cache(100);
-                    }
-                }else if(s.startsWith("loadCache ")){
-                    if(argv==null||argv.length==0){
-                        System.out.println("命令错误");
-                        continue;
-                    }
-                    enableCache = true;
-                    cache = loadCache(argv[0]);
-                }else if(s.startsWith("setCapacity ")){
-                    if(!enableCache){
-                        System.out.println("你必须先启用cache");
-                        continue;
-                    }else if(argv==null||argv.length==0){
-                        System.out.println("命令错误");
-                        continue;
-                    }
-                    cache.setCapacity(Integer.parseInt(argv[0]));
-                }else if(s.equals("listCache")){
-                    if(cache==null||!enableCache){
-                        System.out.println("未启用Cache");
-                    }else{
-                        System.out.println(cache.getClass());
-                    }
-                }
-                else{
-                    System.out.println("不存在这样的指令,请使用help来查看指令集");
-                }
+                stateMachine(s,argv);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -94,6 +48,58 @@ public class SearchEngine {
 
 
         close();
+    }
+
+    private static void stateMachine(String s,String[] argv) throws Exception {
+        if(s.equals("help")){
+            helpDetail();
+        }else if(s.equals("exit")){
+            System.exit(0);
+        }else if(s.startsWith("get ")){
+            cmd_get(argv);
+        }else if(s.startsWith("getWindow ")){
+            cmd_getWindow(argv);
+        }else if(s.startsWith("getRange ")){
+            cmd_getRange(argv);
+        }else if(s.startsWith("save ")){
+            cmd_save(argv);
+        }else if(s.startsWith("saveWindow ")){
+            cmd_save_window(argv);
+        }else if(s.startsWith("saveRange ")){
+            cmd_save_range(argv);
+        }else if(s.equals("enableCache")){
+            enableCache = true;
+            if(cache==null){
+                cache = new LRU_Cache(100);
+            }
+        }else if(s.startsWith("loadCache ")){
+            if(argv==null||argv.length==0){
+                System.out.println("命令错误");
+                return;
+            }
+            enableCache = true;
+            cache = loadCache(argv[0]);
+        }else if(s.startsWith("setCapacity ")){
+            if(!enableCache){
+                System.out.println("你必须先启用cache");
+                return;
+            }else if(argv==null||argv.length==0){
+                System.out.println("命令错误");
+                return;
+            }
+            cache.setCapacity(Integer.parseInt(argv[0]));
+        }else if(s.equals("listCache")){
+            if(cache==null||!enableCache){
+                System.out.println("未启用Cache");
+            }else{
+                System.out.println(cache.getClass());
+            }
+        }else if(s.startsWith("execute")){
+            cmd_execute_usr_file(argv);
+        }
+        else{
+            System.out.println("不存在这样的指令,请使用help来查看指令集");
+        }
     }
 
     private static String[] getArgs(String cmd){
@@ -200,6 +206,24 @@ public class SearchEngine {
         saveRange(arr,args[3]);
     }
 
+    private static void cmd_execute_usr_file(String[] args){
+        if(args==null||args.length==0){
+            System.out.println("命令错误");
+            return;
+        }
+
+        String usr_file = args[0];
+        try(BufferedReader br = new BufferedReader(new FileReader(usr_file))){
+            String s;
+            while((s=br.readLine())!=null){
+                String[] argv = getArgs(s);
+                stateMachine(s,argv);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void helpDetail(){
         String sb = "以下是你可以使用的其他命令\n" +
                 "exit:\t退出程序\n" +
@@ -210,7 +234,8 @@ public class SearchEngine {
                 "saveWindow \"i,j,k,window_size,file_path\":\t将data[i:i+window_size,j,k]以拼接的方式存储到指定文件中,组内空格分隔,组间换行符分隔\n" +
                 "saveRange \"si:ei,sj:ej,sk:ek,file_path\":\t将指定范围内的数据保存到指定文件中,组内空格分隔,组间换行符分隔\n" +
                 "enableCache:\t允许使用缓存(默认LRU)\n" +
-                "loadCache file_path:\t从指定的文件中加载缓存插件\n";
+                "loadCache file_path:\t从指定的文件中加载缓存插件\n" +
+                "execute file_path:\t根据用户的脚本执行命令\n";
         System.out.print(sb);
     }
 

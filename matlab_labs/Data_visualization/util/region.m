@@ -30,7 +30,7 @@ function [] = region(business,time_id,sx,ex,sy,ey,data,target_dir)
     
     grid on
     
-    png_name = sprintf('%d %d %d_%d %d_%d.png',business,time_id,sx,ex,sy,ey);
+    png_name = sprintf('%d_%d_%d_%d %d_%d.png',business,time_id,sx,ex,sy,ey);
     filename = fullfile(target_dir,png_name);
     exportgraphics(gcf,filename,'Resolution',1024)
     

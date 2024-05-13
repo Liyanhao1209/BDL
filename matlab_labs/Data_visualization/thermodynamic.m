@@ -1,4 +1,4 @@
-target_dir = 'D:\workSpace\BigDataLabs\matlab_labs\Data_visualization\target\region';
+target_dir = 'D:\work_place\BigDataLabs\lab1\matlab_labs\Data_visualization\target\region';
 business = input('请输入业务代码:  ');
 time_id = input('请输入时间序列id:  ');
 sx = input('城区是一个100*100的区块，请输入横轴开始id:  ');
